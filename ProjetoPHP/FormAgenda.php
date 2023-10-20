@@ -22,31 +22,47 @@ if(isset($_POST['submit']))
   $Tipo_Servico = $_POST['Tipo_Servico'];
   $Data_Horario = $_POST['Data_Horario'];
 
+ //verificar se existe Cpf cadastrado no banco
+  $sql = $conexao->query("SELECT * FROM Agenda WHERE Cpf = '$Cpf'");
+  
+  if (mysqli_num_rows ($sql) > 0) {
 
+    echo "<script>alert('CPF já consta Cadastrado!')
+    javascript:window.location='FormAgenda.php';
+    </script>"; 
 
-  $sqlINSERT = ("INSERT INTO Agenda (Nome,Cpf,E_mail,Telefone,Tipo_Servico,Data_Horario) 
-  VALUES ('$Nome','$Cpf','$Email','$Telefone','$Tipo_Servico','$Data_Horario')");
-
+  } else 
+    
+  //verificar se existe Data e mesmo horario cadastrado no banco
    
-    //Check connection;
+  $sql = $conexao->query("SELECT * FROM Agenda WHERE Data_Horario = '$Data_Horario'");
+   if(mysqli_num_rows($sql)> 0) {
+   echo "<script>alert('Data e Horario já consta reservado!')
+   javascript:window.location='FormAgenda.php';
+   </script>"; 
 
-    if($conexao->connect_error){
+   }else{
+   
+    $sqlINSERT = ("INSERT INTO Agenda (Nome,Cpf,E_mail,Telefone,Tipo_Servico,Data_Horario) 
+    VALUES ('$Nome','$Cpf','$Email','$Telefone','$Tipo_Servico','$Data_Horario')");
+
+   //Check connection;
+   if($conexao->connect_error)
         die("Connection failed: ".$conexao-> connect_error);
     }
     if ($conexao-> query($sqlINSERT)=== true){
+
     echo "<script>alert('Agendado com sucesso!')
     javascript:window.location='FormAgenda.php';
     </script>";    
      
-
     } else{
         echo "Error INSERT record: ".$conexao->error;
 
     }
 
     $conexao->close();
-}
-
+  }
 
 
 ?>
